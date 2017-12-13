@@ -6,6 +6,10 @@ from torch.autograd import Variable
 from torch.nn import functional as F
 from torchvision import datasets, transforms
 from torchvision.utils import save_image
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
 import os
 
 dir_path=os.path.dirname(os.path.realpath(__file__))
@@ -47,9 +51,9 @@ class encoder(nn.Module):
         super(encoder, self).__init__()
 
         self.fc1 = nn.Linear(784, 400)
-        self.fc21 = nn.Linear(400, 20)
-        self.fc22 = nn.Linear(400, 20)
-        self.fc3 = nn.Linear(20, 400)
+        self.fc21 = nn.Linear(400, 2)
+        self.fc22 = nn.Linear(400, 2)
+        self.fc3 = nn.Linear(2, 400)
         self.fc4 = nn.Linear(400, 784)
 
         self.relu = nn.ReLU()
@@ -73,7 +77,7 @@ class decoder(nn.Module):
     def __init__(self):
         super(decoder, self).__init__()
 
-        self.fc3 = nn.Linear(20, 400)
+        self.fc3 = nn.Linear(2, 400)
         self.fc4 = nn.Linear(400, 784)
 
         self.relu = nn.ReLU()
@@ -116,10 +120,11 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 def proj(params):
-    norm = params.norm(dim=1)
-    norm = norm.clamp(min=1)
-    params =torch.inverse(torch.diag(norm)).mm(params)
-    return params
+    norm = params.norm(dim=1, p=2)
+    paramsy=params.clone()
+    for i in range(args.batch_size):
+	    paramsy[i]=params[i]/norm[i].clamp(min=1-EPS)*(1-EPS)
+    return paramsy
 
 
 def arcosh(x):
@@ -156,7 +161,8 @@ def train(epoch):
         optimizer_dec.zero_grad()
         z, mu, logvar = enc_(data)
 	recon_batch= dec_(z)
-        loss = loss_function(recon_batch, data, mu, logvar)+0.1*punisher(z,label)
+        loss = loss_function(recon_batch, data, mu, logvar)
+	loss += 0.1*punisher(mu,label)
         loss.backward()
         train_loss += loss.data[0]
         optimizer_enc.step()
@@ -169,8 +175,8 @@ def train(epoch):
 
     print '====> Epoch: '+ str(epoch)+' Average loss: '+ str(
 	  train_loss / len(train_loader.dataset))
-#    print('====> Epoch: {} Average loss: {:.4f}'.format(
-#          epoch, train_loss / len(train_loader.dataset)))
+    print('====> Epoch: {} Average loss: {:.4f}'.format(
+          epoch, train_loss / len(train_loader.dataset)))
 
 def punisher(z, label):
     same_family=0
@@ -178,10 +184,10 @@ def punisher(z, label):
     for i, latent_1 in enumerate(z):
 	for j, latent_2 in enumerate(z):
 	    if label[i]==label[j]:
-		same_family+=distance(latent_1,latent_2)
+		same_family+=torch.exp(-distance(latent_1,latent_2))
 	    else:
-		diff_family+=distance(latent_1, latent_2)
-    return torch.log(same_family)-torch.log(diff_family)
+		diff_family+=torch.exp(-distance(latent_1, latent_2))
+    return -torch.log(same_family)+torch.log(diff_family)
 
 def test(epoch):
     enc_.eval()
@@ -193,8 +199,8 @@ def test(epoch):
         data = Variable(data, volatile=True)
         z, mu, logvar= enc_(data)
 	recon_batch=dec_(z)        
-	test_loss += loss_function(recon_batch, data, mu, logvar).data[0]
-	test_loss += 0.1*punisher(z,label).data[0]
+	test_loss = loss_function(recon_batch, data, mu, logvar).data[0]
+	test_loss += VAELoss+0.1*punisher(z,label).data[0]
         if i == 0:
           n = min(data.size(0), 8)
           comparison = torch.cat([data[:n],
@@ -203,20 +209,56 @@ def test(epoch):
                      'results_mobi_01/reconstruction_' + str(epoch) + '.png', nrow=n)
 
     test_loss /= len(test_loader.dataset)
-    print 'TEST LOSS'
+
+    print '<-------------TEST LOSS------------->'
     print test_loss
+
+def plot(filename):
+    enc_.eval()
+    fig = plt.figure(figsize=(10, 10))
+    ax = plt.gca()
+    ax.cla()  # clear things for fresh plot
+
+    ax.set_xlim((-1.1, 1.1))
+    ax.set_ylim((-1.1, 1.1))
+
+    circle = plt.Circle((0, 0), 1., color='black', fill=False)
+    ax.add_artist(circle)
+
+    for i, (data, label) in enumerate(test_loader):	
+        data = Variable(data, volatile=True)
+        zzzz, mu, logvar = enc_(data)
+	for j, z in enumerate(mu):
+		if label[j]==0:
+        		ax.plot(z.data[0],z.data[1], 'o', color='C0')
+		elif label[j]==1:
+        		ax.plot(z.data[0],z.data[1], 'o', color='C1')
+		elif label[j]==2:
+        		ax.plot(z.data[0],z.data[1], 'o', color='C2')
+		elif label[j]==3:
+        		ax.plot(z.data[0],z.data[1], 'o', color='C3')
+		elif label[j]==4:
+        		ax.plot(z.data[0],z.data[1], 'o', color='C4')
+		elif label[j]==5:
+        		ax.plot(z.data[0],z.data[1], 'o', color='C5')
+		elif label[j]==6:
+        		ax.plot(z.data[0],z.data[1], 'o', color='C6')
+		elif label[j]==7:
+        		ax.plot(z.data[0],z.data[1], 'o', color='C7')
+		elif label[j]==8:
+        		ax.plot(z.data[0],z.data[1], 'o', color='C8')
+		elif label[j]==9:
+        		ax.plot(z.data[0],z.data[1], 'o', color='C9')
+
+    plt.savefig(filename)
+
 
 for epoch in range(1, args.epochs + 1):
     train(epoch)
     test(epoch)
-    sample = Variable(torch.randn(64, 20))
-    if args.cuda:
-       sample = sample.cuda()
-    sample = dec_.decode(sample).cpu()
-    save_image(sample.data.view(64, 1, 28, 28),'results_mobi_01/sample_' + str(epoch) + '.png')
+    plot('Latent_0.1_'+str(epoch)+'epoch.png')
 
 
-
-torch.save(enc_.state_dict(),'enc_training.pt')
-torch.save(dec_.state_dict(),'enc_training.pt')
+torch.save(enc_.state_dict(),'enc_training_beta01.pt')
+torch.save(dec_.state_dict(),'enc_training_beta01.pt')
 
