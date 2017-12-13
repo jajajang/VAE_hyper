@@ -156,7 +156,7 @@ def train(epoch):
         optimizer_dec.zero_grad()
         z, mu, logvar = enc_(data)
 	recon_batch= dec_(z)
-        loss = loss_function(recon_batch, data, mu, logvar)+punisher(z,label)
+        loss = loss_function(recon_batch, data, mu, logvar)+0.1*punisher(z,label)
         loss.backward()
         train_loss += loss.data[0]
         optimizer_enc.step()
@@ -194,16 +194,17 @@ def test(epoch):
         z, mu, logvar= enc_(data)
 	recon_batch=dec_(z)        
 	test_loss += loss_function(recon_batch, data, mu, logvar).data[0]
-	test_loss += punisher(z,label).data[0]
+	test_loss += 0.1*punisher(z,label).data[0]
         if i == 0:
           n = min(data.size(0), 8)
           comparison = torch.cat([data[:n],
                                   recon_batch.view(args.batch_size, 1, 28, 28)[:n]])
           save_image(comparison.data.cpu(),
-                     'results_mobi/reconstruction_' + str(epoch) + '.png', nrow=n)
+                     'results_mobi_01/reconstruction_' + str(epoch) + '.png', nrow=n)
 
     test_loss /= len(test_loader.dataset)
-    print('====> Test set loss: ' + test_loss.data)
+    print 'TEST LOSS'
+    print test_loss
 
 for epoch in range(1, args.epochs + 1):
     train(epoch)
@@ -212,7 +213,7 @@ for epoch in range(1, args.epochs + 1):
     if args.cuda:
        sample = sample.cuda()
     sample = dec_.decode(sample).cpu()
-    save_image(sample.data.view(64, 1, 28, 28),'results_mobi/sample_' + str(epoch) + '.png')
+    save_image(sample.data.view(64, 1, 28, 28),'results_mobi_01/sample_' + str(epoch) + '.png')
 
 
 
