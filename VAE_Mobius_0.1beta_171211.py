@@ -235,7 +235,6 @@ def plot(filename):
         data = Variable(data, volatile=True)
         zzzz, mu, logvar = enc_(data)
 	for j, z in enumerate(mu):
-		print z
 		if label[j]==0:
         		ax.plot(z.data[0],z.data[1], 'o', color='C0')
 		elif label[j]==1:
