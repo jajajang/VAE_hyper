@@ -120,10 +120,9 @@ def loss_function(recon_x, x, mu, logvar):
     return BCE + KLD
 
 def proj(params):
-    norm = params.norm(dim=1, p=2)
     paramsy=params.clone()
     for i in range(args.batch_size):
-	    paramsy[i]=params[i]/norm[i].clamp(min=1-EPS)*(1-EPS)
+	    paramsy[i]=params[i]/(params[i].norm()).clamp(min=1-EPS)*(1-EPS)
     return paramsy
 
 
@@ -144,6 +143,10 @@ def distance(u, v):
     gamma = gamma.clamp(min=1 + EPS)
 
     return arcosh(gamma)
+
+def toobig(u):
+    uu = u.norm()**2
+    return torch.exp(uu.clamp(min=1)-1)-1
 
 optimizer_enc = optim.Adam(enc_.parameters(), lr=1e-3)
 optimizer_dec = optim.Adam(dec_.parameters(), lr=1e-3)
@@ -181,13 +184,16 @@ def train(epoch):
 def punisher(z, label):
     same_family=0
     diff_family=0
+    punish_him=0
     for i, latent_1 in enumerate(z):
 	for j, latent_2 in enumerate(z):
 	    if label[i]==label[j]:
 		same_family+=torch.exp(-distance(latent_1,latent_2))
+		punish_him+=toobig(latent_1)+toobig(latent_2)
 	    else:
 		diff_family+=torch.exp(-distance(latent_1, latent_2))
-    return -torch.log(same_family)+torch.log(diff_family)
+		punish_him+=toobig(latent_1)+toobig(latent_2)
+    return -torch.log(same_family)+torch.log(diff_family)+punish_him
 
 def test(epoch):
     enc_.eval()
@@ -200,7 +206,7 @@ def test(epoch):
         z, mu, logvar= enc_(data)
 	recon_batch=dec_(z)        
 	test_loss = loss_function(recon_batch, data, mu, logvar).data[0]
-	test_loss += VAELoss+0.1*punisher(z,label).data[0]
+	test_loss += 0.1*punisher(z,label).data[0]
         if i == 0:
           n = min(data.size(0), 8)
           comparison = torch.cat([data[:n],
@@ -229,6 +235,7 @@ def plot(filename):
         data = Variable(data, volatile=True)
         zzzz, mu, logvar = enc_(data)
 	for j, z in enumerate(mu):
+		print z
 		if label[j]==0:
         		ax.plot(z.data[0],z.data[1], 'o', color='C0')
 		elif label[j]==1:
