@@ -53,8 +53,6 @@ class encoder(nn.Module):
         self.fc1 = nn.Linear(784, 400)
         self.fc21 = nn.Linear(400, 2)
         self.fc22 = nn.Linear(400, 2)
-        self.fc3 = nn.Linear(2, 400)
-        self.fc4 = nn.Linear(400, 784)
 
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
@@ -63,14 +61,9 @@ class encoder(nn.Module):
         h1 = self.relu(self.fc1(x))
         return self.fc21(h1), self.fc22(h1)
 
-    def reparameterize(self, mu, logvar):
-        std = logvar.mul(0.5).exp_()
-        eps = Variable(std.data.new(std.size()).normal_())
-        return proj(new_addition(mu,eps.mul(std))), mu, logvar
-
     def forward(self, x):
         mu, logvar = self.encode(x.view(-1, 784))
-        return self.reparameterize(mu, logvar)
+        return mu, logvar
 
 class decoder(nn.Module):
 	
@@ -154,22 +147,17 @@ optimizer_dec = optim.Adam(dec_.parameters(), lr=1e-3)
 
 def train(epoch):
     enc_.train()
-    dec_.train()
     train_loss = 0
     for batch_idx, (data, label) in enumerate(train_loader):
         data = Variable(data)
         if args.cuda:
             data = data.cuda()
         optimizer_enc.zero_grad()
-        optimizer_dec.zero_grad()
-        z, mu, logvar = enc_(data)
-        recon_batch= dec_(z)
-        loss = loss_function(recon_batch, data, mu, logvar)
-        loss += 0.1*punisher(z,label)
+        mu, logvar = enc_(data)
+        loss = punisher(mu,label)
         loss.backward()
         train_loss += loss.data[0]
         optimizer_enc.step()
-        optimizer_dec.step()
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
@@ -197,23 +185,15 @@ def punisher(z, label):
 
 def test(epoch):
     enc_.eval()
-    dec_.eval()
     test_loss = 0
     for i, (data, label) in enumerate(test_loader):
         if args.cuda:
             data = data.cuda()
         data = Variable(data, volatile=True)
-        z, mu, logvar= enc_(data)
-        recon_batch=dec_(z)        
-        test_loss += loss_function(recon_batch, data, mu, logvar).data[0]
-        test_loss += 0.1*punisher(z,label).data[0]
+        mu, logvar= enc_(data)        
+        test_loss += 0.1*punisher(mu,label).data[0]
         if i == 0:
           n = min(data.size(0), 8)
-          comparison = torch.cat([data[:n],
-                                  recon_batch.view(args.batch_size, 1, 28, 28)[:n]])
-          save_image(comparison.data.cpu(),
-                     'results_mobi_01/reconstruction_' + str(epoch) + '.png', nrow=n)
-
     test_loss /= len(test_loader.dataset)
 
     print '<-------------TEST LOSS------------->'
@@ -235,8 +215,8 @@ def plot(filename):
         if args.cuda:
             data = data.cuda()
         data = Variable(data, volatile=True)
-        zzzz, mu, logvar = enc_(data)
-        for j, z in enumerate(zzzz):
+        mu, logvar = enc_(data)
+        for j, z in enumerate(mu):
     	    if label[j]==0:
         	    	ax.plot(z.data[0],z.data[1], 'o', color='C0')
     	    elif label[j]==1:
@@ -264,9 +244,6 @@ def plot(filename):
 for epoch in range(1, args.epochs + 1):
     train(epoch)
     test(epoch)
-    plot('Latent_0.1_'+str(epoch)+'epoch.png')
+    plot('Latent_0.1_mu_only_'+str(epoch)+'epoch.png')
 
-
-torch.save(enc_.state_dict(),'enc_training_beta01.pt')
-torch.save(dec_.state_dict(),'enc_training_beta01.pt')
 
