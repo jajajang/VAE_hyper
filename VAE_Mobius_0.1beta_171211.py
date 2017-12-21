@@ -7,12 +7,13 @@ from torch.nn import functional as F
 from torchvision import datasets, transforms
 from torchvision.utils import save_image
 import matplotlib
+
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-dir_path=os.path.dirname(os.path.realpath(__file__))
+dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 
 parser = argparse.ArgumentParser(description='VAE MNIST Example')
@@ -30,11 +31,10 @@ args = parser.parse_args()
 
 args.cuda = (not args.no_cuda) and torch.cuda.is_available()
 
-
 torch.manual_seed(args.seed)
 if args.cuda:
     torch.cuda.manual_seed(args.seed)
-EPS=1e-5
+EPS = 1e-5
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 train_loader = torch.utils.data.DataLoader(
@@ -66,14 +66,14 @@ class encoder(nn.Module):
     def reparameterize(self, mu, logvar):
         std = logvar.mul(0.5).exp_()
         eps = Variable(std.data.new(std.size()).normal_())
-        return proj(new_addition(mu,eps.mul(std))), mu, logvar
+        return eps.mul(std).add_(mu), mu, logvar
 
     def forward(self, x):
         mu, logvar = self.encode(x.view(-1, 784))
         return self.reparameterize(mu, logvar)
 
+
 class decoder(nn.Module):
-	
     def __init__(self):
         super(decoder, self).__init__()
 
@@ -82,7 +82,7 @@ class decoder(nn.Module):
 
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
-        
+
     def decode(self, z):
         h3 = self.relu(self.fc3(z))
         return self.sigmoid(self.fc4(h3))
@@ -98,13 +98,6 @@ if args.cuda:
     enc_.cuda()
     dec_.cuda()
 
-def new_addition(u,v):
-    uu = u.norm(dim=1) ** 2
-    vv = v.norm(dim=1) ** 2
-    uv = torch.diag(torch.mm(u,v.t()),0)
-    uppp= (torch.mm(torch.diag(1+2*uv+vv),u)+torch.mm(torch.diag(1-uu),v))
-    downy=(1+2*uv+torch.mul(uu,vv))
-    return torch.inverse(torch.diag(downy)).mm(uppp)
 
 def loss_function(recon_x, x, mu, logvar):
     BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784))
@@ -119,10 +112,12 @@ def loss_function(recon_x, x, mu, logvar):
 
     return BCE + KLD
 
+
 def proj(params):
-    paramsy=params.clone()
+    paramsy = params.clone()
+    t_val = (params.norm(p=2, dim=1) ** 2 + 1).sqrt()
     for i in range(args.batch_size):
-	    paramsy[i]=params[i]/(params[i].norm()).clamp(min=1-EPS)*(1-EPS)
+        paramsy[i] = params[i] / (1 + t_val[i])
     return paramsy
 
 
@@ -133,20 +128,26 @@ def arcosh(x):
 def distance(u, v):
     uu = u.norm() ** 2
     vv = v.norm() ** 2
-    uv = torch.dot(u,v)
-    alpha = 1 - uu
-    alpha = alpha.clamp(min=EPS)
-    beta = 1 - vv
-    beta = beta.clamp(min=EPS)
+    u0 = (uu + 1)
+    v0 = (vv + 1)
+    d = arcosh(u0.sqrt() * v0.sqrt() - torch.dot(u, v))
+    return d
 
-    gamma = 1 + 2 * (uu - 2 * uv + vv) / (alpha * beta)
-    gamma = gamma.clamp(min=1 + EPS)
 
-    return arcosh(gamma)
+def punisher(z, label):
+    same_family = 0
+    diff_family = 0
+    for i, latent_1 in enumerate(z):
+        for j, latent_2 in enumerate(z):
+            if i >= j:
+                continue
+            elif label[i] == label[j]:
+                same_family += torch.exp(-distance(latent_1, latent_2))
+            else:
+                diff_family += torch.exp(-distance(latent_1, latent_2))
 
-def toobig(u):
-    uu = u.norm()**2
-    return torch.exp(uu.clamp(min=1)-1)-1
+    return -torch.log(same_family) + torch.log(diff_family)
+
 
 optimizer_enc = optim.Adam(enc_.parameters(), lr=1e-3)
 optimizer_dec = optim.Adam(dec_.parameters(), lr=1e-3)
@@ -163,9 +164,9 @@ def train(epoch):
         optimizer_enc.zero_grad()
         optimizer_dec.zero_grad()
         z, mu, logvar = enc_(data)
-        recon_batch= dec_(z)
+        recon_batch = dec_(z)
         loss = loss_function(recon_batch, data, mu, logvar)
-        loss += 0.1*punisher(z,label)
+        loss += 0.1 * punisher(z, label)
         loss.backward()
         train_loss += loss.data[0]
         optimizer_enc.step()
@@ -173,27 +174,14 @@ def train(epoch):
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
-                100. * batch_idx / len(train_loader),
-                loss.data[0] / len(data)))
+                       100. * batch_idx / len(train_loader),
+                       loss.data[0] / len(data)))
 
-    print '====> Epoch: '+ str(epoch)+' Average loss: '+ str(
-	  train_loss / len(train_loader.dataset))
+    print '====> Epoch: ' + str(epoch) + ' Average loss: ' + str(
+        train_loss / len(train_loader.dataset))
     print('====> Epoch: {} Average loss: {:.4f}'.format(
-          epoch, train_loss / len(train_loader.dataset)))
+        epoch, train_loss / len(train_loader.dataset)))
 
-def punisher(z, label):
-    same_family=0
-    diff_family=0
-    punish_him=0
-    for i, latent_1 in enumerate(z):
-	for j, latent_2 in enumerate(z):
-	    if label[i]==label[j]:
-		same_family+=torch.exp(-distance(latent_1,latent_2))
-##		punish_him+=toobig(latent_1)+toobig(latent_2)
-	    else:
-		diff_family+=torch.exp(-distance(latent_1, latent_2))
-##		punish_him+=toobig(latent_1)+toobig(latent_2)
-    return -torch.log(same_family)+torch.log(diff_family)#+punish_him
 
 def test(epoch):
     enc_.eval()
@@ -203,21 +191,22 @@ def test(epoch):
         if args.cuda:
             data = data.cuda()
         data = Variable(data, volatile=True)
-        z, mu, logvar= enc_(data)
-        recon_batch=dec_(z)        
+        z, mu, logvar = enc_(data)
+        recon_batch = dec_(z)
         test_loss += loss_function(recon_batch, data, mu, logvar).data[0]
-        test_loss += 0.1*punisher(z,label).data[0]
+        test_loss += 0.1 * punisher(z, label).data[0]
         if i == 0:
-          n = min(data.size(0), 8)
-          comparison = torch.cat([data[:n],
-                                  recon_batch.view(args.batch_size, 1, 28, 28)[:n]])
-          save_image(comparison.data.cpu(),
-                     'results_mobi_01/reconstruction_' + str(epoch) + '.png', nrow=n)
+            n = min(data.size(0), 8)
+            comparison = torch.cat([data[:n],
+                                    recon_batch.view(args.batch_size, 1, 28, 28)[:n]])
+            save_image(comparison.data.cpu(),
+                       'results_mobi_01/reconstruction_' + str(epoch) + '.png', nrow=n)
 
     test_loss /= len(test_loader.dataset)
 
     print '<-------------TEST LOSS------------->'
     print test_loss
+
 
 def plot(filename):
     enc_.eval()
@@ -235,28 +224,29 @@ def plot(filename):
         if args.cuda:
             data = data.cuda()
         data = Variable(data, volatile=True)
-        zzzz, mu, logvar = enc_(data)
-        for j, z in enumerate(zzzz):
-    	    if label[j]==0:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C0')
-    	    elif label[j]==1:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C1')
-    	    elif label[j]==2:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C2')
-    	    elif label[j]==3:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C3')
-    	    elif label[j]==4:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C4')
-    	    elif label[j]==5:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C5')
-    	    elif label[j]==6:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C6')
-    	    elif label[j]==7:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C7')
-    	    elif label[j]==8:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C8')
-    	    elif label[j]==9:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C9')
+        mu = enc_(data)
+        mu_disk = proj(mu)
+        for j, z in enumerate(mu_disk):
+            if label[j] == 0:
+                ax.plot(z.data[0], z.data[1], 'o', color='C0')
+            elif label[j] == 1:
+                ax.plot(z.data[0], z.data[1], 'o', color='C1')
+            elif label[j] == 2:
+                ax.plot(z.data[0], z.data[1], 'o', color='C2')
+            elif label[j] == 3:
+                ax.plot(z.data[0], z.data[1], 'o', color='C3')
+            elif label[j] == 4:
+                ax.plot(z.data[0], z.data[1], 'o', color='C4')
+            elif label[j] == 5:
+                ax.plot(z.data[0], z.data[1], 'o', color='C5')
+            elif label[j] == 6:
+                ax.plot(z.data[0], z.data[1], 'o', color='C6')
+            elif label[j] == 7:
+                ax.plot(z.data[0], z.data[1], 'o', color='C7')
+            elif label[j] == 8:
+                ax.plot(z.data[0], z.data[1], 'o', color='C8')
+            elif label[j] == 9:
+                ax.plot(z.data[0], z.data[1], 'o', color='C9')
 
     plt.savefig(filename)
 
@@ -264,9 +254,7 @@ def plot(filename):
 for epoch in range(1, args.epochs + 1):
     train(epoch)
     test(epoch)
-    plot('Latent_0.1_'+str(epoch)+'epoch.png')
+    plot('Latent_01_' + str(epoch) + 'epoch.png')
 
-
-torch.save(enc_.state_dict(),'enc_training_beta01.pt')
-torch.save(dec_.state_dict(),'enc_training_beta01.pt')
-
+torch.save(enc_.state_dict(), 'enc_training_not_Poin_dec01.pt')
+torch.save(dec_.state_dict(), 'enc_training_not_Poin_dec01.pt')

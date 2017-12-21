@@ -11,6 +11,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import sys
 
 dir_path=os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
@@ -52,44 +53,23 @@ class encoder(nn.Module):
 
         self.fc1 = nn.Linear(784, 400)
         self.fc21 = nn.Linear(400, 2)
-        self.fc22 = nn.Linear(400, 2)
 
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
 
     def encode(self, x):
         h1 = self.relu(self.fc1(x))
-        return self.fc21(h1), self.fc22(h1)
+        return self.fc21(h1)
 
     def forward(self, x):
-        mu, logvar = self.encode(x.view(-1, 784))
-        return mu, logvar
-
-class decoder(nn.Module):
-	
-    def __init__(self):
-        super(decoder, self).__init__()
-
-        self.fc3 = nn.Linear(2, 400)
-        self.fc4 = nn.Linear(400, 784)
-
-        self.relu = nn.ReLU()
-        self.sigmoid = nn.Sigmoid()
-        
-    def decode(self, z):
-        h3 = self.relu(self.fc3(z))
-        return self.sigmoid(self.fc4(h3))
-
-    def forward(self, z):
-        return self.decode(z)
+        mu= self.encode(x.view(-1, 784))
+        return mu
 
 
 enc_ = encoder()
-dec_ = decoder()
 
 if args.cuda:
     enc_.cuda()
-    dec_.cuda()
 
 def new_addition(u,v):
     uu = u.norm(dim=1) ** 2
@@ -111,18 +91,25 @@ def loss_function(recon_x, x, mu, logvar):
     KLD /= args.batch_size * 784
 
     return BCE + KLD
-
+'''
 def proj(params):
     paramsy=params.clone()
     for i in range(args.batch_size):
 	    paramsy[i]=params[i]/(params[i].norm()).clamp(min=1-EPS)*(1-EPS)
     return paramsy
-
+'''
+def proj(params):
+    paramsy=params.clone()
+    t_val=(params.norm(p=2, dim=1)**2+1).sqrt()
+    for i in range(args.batch_size):
+        paramsy[i]=params[i]/(1+t_val[i])
+    return paramsy
 
 def arcosh(x):
     return torch.log(x + torch.sqrt(x ** 2 - 1))
 
 
+"""
 def distance(u, v):
     uu = u.norm() ** 2
     vv = v.norm() ** 2
@@ -136,28 +123,47 @@ def distance(u, v):
     gamma = gamma.clamp(min=1 + EPS)
 
     return arcosh(gamma)
+"""
+
+def distance(u,v):
+    uu = u.norm() ** 2
+    vv = v.norm() ** 2
+    u0 = (uu+1)
+    v0 = (vv+1)
+    d = arcosh(u0.sqrt()*v0.sqrt()-torch.dot(u,v))
+    return d
 
 def toobig(u):
     uu = u.norm()**2
     return torch.exp(uu.clamp(min=1)-1)-1
 
-optimizer_enc = optim.Adam(enc_.parameters(), lr=1e-3)
-optimizer_dec = optim.Adam(dec_.parameters(), lr=1e-3)
+optimizer_enc = optim.ASGD(enc_.parameters(), lr=1e-3)
 
 
 def train(epoch):
     enc_.train()
     train_loss = 0
+    prev_data=0
     for batch_idx, (data, label) in enumerate(train_loader):
         data = Variable(data)
         if args.cuda:
             data = data.cuda()
         optimizer_enc.zero_grad()
-        mu, logvar = enc_(data)
+        mu = enc_(data)
         loss = punisher(mu,label)
         loss.backward()
+        for i, ass in enumerate(enc_.parameters()):
+            if ass is None:
+                continue
+            elif np.isnan(((ass.grad).data).numpy()).any():
+                print mu
+                print label
+                print loss
+                print ass.grad.data
+                sys.exit()
         train_loss += loss.data[0]
         optimizer_enc.step()
+        prev_label=label
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
@@ -169,19 +175,20 @@ def train(epoch):
     print('====> Epoch: {} Average loss: {:.4f}'.format(
           epoch, train_loss / len(train_loader.dataset)))
 
+
 def punisher(z, label):
     same_family=0
     diff_family=0
-    punish_him=0
     for i, latent_1 in enumerate(z):
-	for j, latent_2 in enumerate(z):
-	    if label[i]==label[j]:
-		same_family+=torch.exp(-distance(latent_1,latent_2))
-##		punish_him+=toobig(latent_1)+toobig(latent_2)
-	    else:
-		diff_family+=torch.exp(-distance(latent_1, latent_2))
-##		punish_him+=toobig(latent_1)+toobig(latent_2)
-    return -torch.log(same_family)+torch.log(diff_family)#+punish_him
+        for j, latent_2 in enumerate(z):
+            if i>=j: continue
+            elif label[i] == label[j]:
+                same_family += torch.exp(-distance(latent_1, latent_2))
+            else:
+                diff_family += torch.exp(-distance(latent_1, latent_2))
+
+    return -torch.log(same_family)+torch.log(diff_family)
+
 
 def test(epoch):
     enc_.eval()
@@ -190,7 +197,7 @@ def test(epoch):
         if args.cuda:
             data = data.cuda()
         data = Variable(data, volatile=True)
-        mu, logvar= enc_(data)        
+        mu= enc_(data)
         test_loss += 0.1*punisher(mu,label).data[0]
         if i == 0:
           n = min(data.size(0), 8)
@@ -198,6 +205,7 @@ def test(epoch):
 
     print '<-------------TEST LOSS------------->'
     print test_loss
+
 
 def plot(filename):
     enc_.eval()
@@ -215,8 +223,9 @@ def plot(filename):
         if args.cuda:
             data = data.cuda()
         data = Variable(data, volatile=True)
-        mu, logvar = enc_(data)
-        for j, z in enumerate(mu):
+        mu = enc_(data)
+        mu_disk=proj(mu)
+        for j, z in enumerate(mu_disk):
     	    if label[j]==0:
         	    	ax.plot(z.data[0],z.data[1], 'o', color='C0')
     	    elif label[j]==1:
