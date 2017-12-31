@@ -21,7 +21,7 @@ parser.add_argument('--batch-size', type=int, default=16, metavar='N',
                     help='input batch size for training (default: 128)')
 parser.add_argument('--epochs', type=int, default=10, metavar='N',
                     help='number of epochs to train (default: 10)')
-parser.add_argument('--no-cuda', action='store_true', default=False,
+parser.add_argument('--no-cuda', action='store_true', default=True,
                     help='enables CUDA training')
 parser.add_argument('--seed', type=int, default=1, metavar='S',
                     help='random seed (default: 1)')
@@ -43,7 +43,7 @@ train_loader = torch.utils.data.DataLoader(
     batch_size=args.batch_size, shuffle=True, **kwargs)
 test_loader = torch.utils.data.DataLoader(
     datasets.MNIST('../data', train=False, transform=transforms.ToTensor()),
-    batch_size=args.batch_size, shuffle=True, **kwargs)
+    batch_size=args.batch_size, shuffle=False, **kwargs)
 
 
 class encoder(nn.Module):
@@ -124,6 +124,15 @@ def proj(params):
 def arcosh(x):
     return torch.log(x + torch.sqrt(x ** 2 - 1))
 
+'''
+def distance(u, v):
+    uu = u.norm() ** 2
+    vv = v.norm() ** 2
+    u0 = (uu + 1)
+    v0 = (vv + 1)
+    d = arcosh(u0.sqrt() * v0.sqrt() - torch.dot(u, v))
+    return d.clamp(min=EPS)
+'''
 
 def distance(u, v):
     uu = u.norm() ** 2
@@ -132,7 +141,6 @@ def distance(u, v):
     v0 = (vv + 1)
     d = arcosh(u0.sqrt() * v0.sqrt() - torch.dot(u, v))
     return d.clamp(min=EPS)
-
 
 def punisher(z, label):
     same_family = 0
@@ -169,8 +177,8 @@ def train(epoch):
         optimizer_dec.zero_grad()
         z, mu, logvar = enc_(data)
         recon_batch = dec_(z)
-        VLoss = loss_function(recon_batch, data, mu, logvar)
-        loss = VLoss + 0.1 * punisher(z, label)
+        VLoss = F.binary_cross_entropy(recon_batch, data.view(-1, 784))
+        loss = loss_function(recon_batch, data, mu, logvar) + 0.1 * punisher(z, label)
         loss.backward()
 
         for i, ass in enumerate(enc_.parameters()):
@@ -274,9 +282,9 @@ def plot(filename):
 
 
 for epoch in range(1, args.epochs + 1):
+    plot('Latent_01_' + str(epoch) + 'epoch.png')
     train(epoch)
     test(epoch)
-    plot('Latent_01_' + str(epoch) + 'epoch.png')
 
 torch.save(enc_.state_dict(), 'enc_training_not_Poin_dec01.pt')
 torch.save(dec_.state_dict(), 'enc_training_not_Poin_dec01.pt')

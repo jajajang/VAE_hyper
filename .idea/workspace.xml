@@ -2,16 +2,53 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d81e7091-057b-4851-823b-d147159dd73d" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/VAE_hyper.iml" afterPath="$PROJECT_DIR$/.idea/VAE_hyper.iml" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_1epoch.png" afterPath="$PROJECT_DIR$/Latent_0.1_mu_only_1epoch.png" />
-      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_2epoch.png" afterPath="$PROJECT_DIR$/Latent_0.1_mu_only_2epoch.png" />
-      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_3epoch.png" afterPath="$PROJECT_DIR$/Latent_0.1_mu_only_3epoch.png" />
-      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_4epoch.png" afterPath="$PROJECT_DIR$/Latent_0.1_mu_only_4epoch.png" />
-      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_5epoch.png" afterPath="$PROJECT_DIR$/Latent_0.1_mu_only_5epoch.png" />
+      <change beforePath="$PROJECT_DIR$/Hyp2DVAELoss.py" afterPath="$PROJECT_DIR$/Hyp2DVAELoss.py" />
+      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_10epoch.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_1epoch.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_2epoch.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_3epoch.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_4epoch.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_5epoch.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_6epoch.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_7epoch.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_8epoch.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Latent_0.1_mu_only_9epoch.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/Latent_01_1epoch.png" afterPath="$PROJECT_DIR$/Latent_01_1epoch.png" />
+      <change beforePath="$PROJECT_DIR$/VAE" afterPath="$PROJECT_DIR$/VAE" />
       <change beforePath="$PROJECT_DIR$/VAE_Mobius_0.1beta_171211.py" afterPath="$PROJECT_DIR$/VAE_Mobius_0.1beta_171211.py" />
       <change beforePath="$PROJECT_DIR$/VAE_enc_only.py" afterPath="$PROJECT_DIR$/VAE_enc_only.py" />
+      <change beforePath="$PROJECT_DIR$/enc_training.pt" afterPath="$PROJECT_DIR$/enc_training.pt" />
+      <change beforePath="$PROJECT_DIR$/results/reconstruction_1.png" afterPath="$PROJECT_DIR$/results/reconstruction_1.png" />
+      <change beforePath="$PROJECT_DIR$/results/reconstruction_10.png" afterPath="$PROJECT_DIR$/results/reconstruction_10.png" />
+      <change beforePath="$PROJECT_DIR$/results/reconstruction_2.png" afterPath="$PROJECT_DIR$/results/reconstruction_2.png" />
+      <change beforePath="$PROJECT_DIR$/results/reconstruction_3.png" afterPath="$PROJECT_DIR$/results/reconstruction_3.png" />
+      <change beforePath="$PROJECT_DIR$/results/reconstruction_4.png" afterPath="$PROJECT_DIR$/results/reconstruction_4.png" />
+      <change beforePath="$PROJECT_DIR$/results/reconstruction_5.png" afterPath="$PROJECT_DIR$/results/reconstruction_5.png" />
+      <change beforePath="$PROJECT_DIR$/results/reconstruction_6.png" afterPath="$PROJECT_DIR$/results/reconstruction_6.png" />
+      <change beforePath="$PROJECT_DIR$/results/reconstruction_7.png" afterPath="$PROJECT_DIR$/results/reconstruction_7.png" />
+      <change beforePath="$PROJECT_DIR$/results/reconstruction_8.png" afterPath="$PROJECT_DIR$/results/reconstruction_8.png" />
+      <change beforePath="$PROJECT_DIR$/results/reconstruction_9.png" afterPath="$PROJECT_DIR$/results/reconstruction_9.png" />
+      <change beforePath="$PROJECT_DIR$/results/sample_1.png" afterPath="$PROJECT_DIR$/results/sample_1.png" />
+      <change beforePath="$PROJECT_DIR$/results/sample_10.png" afterPath="$PROJECT_DIR$/results/sample_10.png" />
+      <change beforePath="$PROJECT_DIR$/results/sample_2.png" afterPath="$PROJECT_DIR$/results/sample_2.png" />
+      <change beforePath="$PROJECT_DIR$/results/sample_3.png" afterPath="$PROJECT_DIR$/results/sample_3.png" />
+      <change beforePath="$PROJECT_DIR$/results/sample_4.png" afterPath="$PROJECT_DIR$/results/sample_4.png" />
+      <change beforePath="$PROJECT_DIR$/results/sample_5.png" afterPath="$PROJECT_DIR$/results/sample_5.png" />
+      <change beforePath="$PROJECT_DIR$/results/sample_6.png" afterPath="$PROJECT_DIR$/results/sample_6.png" />
+      <change beforePath="$PROJECT_DIR$/results/sample_7.png" afterPath="$PROJECT_DIR$/results/sample_7.png" />
+      <change beforePath="$PROJECT_DIR$/results/sample_8.png" afterPath="$PROJECT_DIR$/results/sample_8.png" />
+      <change beforePath="$PROJECT_DIR$/results/sample_9.png" afterPath="$PROJECT_DIR$/results/sample_9.png" />
+      <change beforePath="$PROJECT_DIR$/results_mobi_01/reconstruction_1.png" afterPath="$PROJECT_DIR$/results_mobi_01/reconstruction_1.png" />
+      <change beforePath="$PROJECT_DIR$/results_mobi_01/reconstruction_10.png" afterPath="$PROJECT_DIR$/results_mobi_01/reconstruction_10.png" />
+      <change beforePath="$PROJECT_DIR$/results_mobi_01/reconstruction_2.png" afterPath="$PROJECT_DIR$/results_mobi_01/reconstruction_2.png" />
+      <change beforePath="$PROJECT_DIR$/results_mobi_01/reconstruction_3.png" afterPath="$PROJECT_DIR$/results_mobi_01/reconstruction_3.png" />
+      <change beforePath="$PROJECT_DIR$/results_mobi_01/reconstruction_4.png" afterPath="$PROJECT_DIR$/results_mobi_01/reconstruction_4.png" />
+      <change beforePath="$PROJECT_DIR$/results_mobi_01/reconstruction_5.png" afterPath="$PROJECT_DIR$/results_mobi_01/reconstruction_5.png" />
+      <change beforePath="$PROJECT_DIR$/results_mobi_01/reconstruction_6.png" afterPath="$PROJECT_DIR$/results_mobi_01/reconstruction_6.png" />
+      <change beforePath="$PROJECT_DIR$/results_mobi_01/reconstruction_7.png" afterPath="$PROJECT_DIR$/results_mobi_01/reconstruction_7.png" />
+      <change beforePath="$PROJECT_DIR$/results_mobi_01/reconstruction_8.png" afterPath="$PROJECT_DIR$/results_mobi_01/reconstruction_8.png" />
+      <change beforePath="$PROJECT_DIR$/results_mobi_01/reconstruction_9.png" afterPath="$PROJECT_DIR$/results_mobi_01/reconstruction_9.png" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,11 +59,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="VAE_enc_only.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/VAE_enc_only.py">
+      <file leaf-file-name="Hyp2DVAELoss.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Hyp2DVAELoss.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="251" column="0" lean-forward="true" selection-start-line="208" selection-start-column="0" selection-end-line="251" selection-end-column="0" />
+            <state relative-caret-position="150">
+              <caret line="114" column="0" lean-forward="false" selection-start-line="114" selection-start-column="0" selection-end-line="121" selection-end-column="0" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -34,14 +71,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="VAE_Mobius_0.1beta_171211.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/VAE_Mobius_0.1beta_171211.py">
+      <file leaf-file-name="VAE_plot" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/VAE_plot">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
-              <caret line="178" column="0" lean-forward="true" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
+            <state relative-caret-position="286">
+              <caret line="231" column="31" lean-forward="true" selection-start-line="231" selection-start-column="31" selection-end-line="231" selection-end-column="31" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VAE_dummy" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/VAE_dummy">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2844">
+              <caret line="158" column="14" lean-forward="false" selection-start-line="158" selection-start-column="14" selection-end-line="158" selection-end-column="14" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -51,6 +98,12 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>logvar</find>
+      <find>dist</find>
+      <find>cross</find>
+      <find>plot</find>
+      <find>proj</find>
+      <find>16</find>
+      <find>legendary[</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -59,15 +112,20 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/VAE" />
         <option value="$PROJECT_DIR$/VAE_enc_only.py" />
+        <option value="$PROJECT_DIR$/VAE_Euclidean_0.1beta_171211 .py" />
+        <option value="$PROJECT_DIR$/EucD5.py" />
+        <option value="$PROJECT_DIR$/VAE" />
         <option value="$PROJECT_DIR$/VAE_Mobius_0.1beta_171211.py" />
+        <option value="$PROJECT_DIR$/VAE_dummy" />
+        <option value="$PROJECT_DIR$/Hyp2DVAELoss.py" />
+        <option value="$PROJECT_DIR$/VAE_plot" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="789" />
-    <option name="y" value="85" />
+    <option name="x" value="294" />
+    <option name="y" value="50" />
     <option name="width" value="1400" />
     <option name="height" value="886" />
   </component>
@@ -87,6 +145,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -98,8 +158,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -115,6 +173,11 @@
       </console-settings>
     </option>
   </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -127,7 +190,43 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.VAE_enc_only">
+  <component name="RunManager" selected="Python.VAE_plot">
+    <configuration name="EucD5" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="VAE_hyper" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/EucD5.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="Hyp2DVAELoss" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="VAE_hyper" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Hyp2DVAELoss.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="VAE" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -164,14 +263,38 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
-    <list size="2">
+    <configuration name="VAE_plot" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="VAE_hyper" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/VAE_plot" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.VAE" />
       <item index="1" class="java.lang.String" itemvalue="Python.VAE_enc_only" />
+      <item index="2" class="java.lang.String" itemvalue="Python.EucD5" />
+      <item index="3" class="java.lang.String" itemvalue="Python.Hyp2DVAELoss" />
+      <item index="4" class="java.lang.String" itemvalue="Python.VAE_plot" />
     </list>
     <recent_temporary>
-      <list size="2">
-        <item index="0" class="java.lang.String" itemvalue="Python.VAE_enc_only" />
-        <item index="1" class="java.lang.String" itemvalue="Python.VAE" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.VAE_plot" />
+        <item index="1" class="java.lang.String" itemvalue="Python.Hyp2DVAELoss" />
+        <item index="2" class="java.lang.String" itemvalue="Python.VAE" />
+        <item index="3" class="java.lang.String" itemvalue="Python.EucD5" />
+        <item index="4" class="java.lang.String" itemvalue="Python.VAE_enc_only" />
       </list>
     </recent_temporary>
   </component>
@@ -192,14 +315,15 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="789" y="85" width="1400" height="886" extended-state="0" />
+    <frame x="294" y="50" width="1400" height="886" extended-state="0" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25417575" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32948717" sideWeight="0.37071428" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32948717" sideWeight="0.6292857" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2448718" sideWeight="0.3992857" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2448718" sideWeight="0.60071427" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32948717" sideWeight="0.4942857" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31666666" sideWeight="0.5557143" order="3" side_tool="false" content_ui="tabs" />
@@ -209,7 +333,6 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -218,13 +341,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/VAE_enc_only.py</url>
-          <line>158</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
@@ -242,13 +358,101 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/Hyp2DVAELoss.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VAE_plot">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" column="9" lean-forward="true" selection-start-line="10" selection-start-column="9" selection-end-line="10" selection-end-column="9" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VAE_dummy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2844">
+          <caret line="158" column="14" lean-forward="false" selection-start-line="158" selection-start-column="14" selection-end-line="158" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/EucD5.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VAE">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2070">
+          <caret line="115" column="0" lean-forward="true" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/EucD5.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/EucD5.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VAE_Euclidean_0.1beta_171211 .py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VAE_enc_only.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VAE_Mobius_0.1beta_171211.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2034">
+          <caret line="113" column="0" lean-forward="true" selection-start-line="113" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VAE_enc_only.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4518">
+          <caret line="251" column="0" lean-forward="true" selection-start-line="208" selection-start-column="0" selection-end-line="251" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VAE_Mobius_0.1beta_171211.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3204">
+          <caret line="178" column="0" lean-forward="true" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/VAE_enc_only.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3996">
           <caret line="222" column="21" lean-forward="true" selection-start-line="222" selection-start-column="21" selection-end-line="222" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -301,13 +505,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/VAE">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-72">
-          <caret line="8" column="9" lean-forward="false" selection-start-line="8" selection-start-column="9" selection-end-line="8" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/run_vae_enc.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -315,20 +512,63 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/VAE_Euclidean_0.1beta_171211 .py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="28" column="40" lean-forward="false" selection-start-line="28" selection-start-column="40" selection-end-line="28" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/VAE_enc_only.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="251" column="0" lean-forward="true" selection-start-line="208" selection-start-column="0" selection-end-line="251" selection-end-column="0" />
+        <state relative-caret-position="306">
+          <caret line="25" column="49" lean-forward="false" selection-start-line="25" selection-start-column="49" selection-end-line="25" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VAE">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2070">
+          <caret line="115" column="0" lean-forward="false" selection-start-line="115" selection-start-column="0" selection-end-line="115" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/EucD5.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2646">
+          <caret line="11" column="25" lean-forward="false" selection-start-line="11" selection-start-column="25" selection-end-line="11" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VAE_Mobius_0.1beta_171211.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="501">
+          <caret line="201" column="24" lean-forward="true" selection-start-line="201" selection-start-column="24" selection-end-line="201" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VAE_dummy">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2844">
+          <caret line="158" column="14" lean-forward="false" selection-start-line="158" selection-start-column="14" selection-end-line="158" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Hyp2DVAELoss.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="114" column="0" lean-forward="false" selection-start-line="114" selection-start-column="0" selection-end-line="121" selection-end-column="0" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/VAE_Mobius_0.1beta_171211.py">
+    <entry file="file://$PROJECT_DIR$/VAE_plot">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="178" column="0" lean-forward="true" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
+        <state relative-caret-position="286">
+          <caret line="231" column="31" lean-forward="true" selection-start-line="231" selection-start-column="31" selection-end-line="231" selection-end-column="31" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>

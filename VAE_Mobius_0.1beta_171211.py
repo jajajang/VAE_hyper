@@ -131,7 +131,7 @@ def distance(u, v):
     u0 = (uu + 1)
     v0 = (vv + 1)
     d = arcosh(u0.sqrt() * v0.sqrt() - torch.dot(u, v))
-    return d
+    return d.clamp(min=EPS)
 
 
 def punisher(z, label):
@@ -157,7 +157,11 @@ def train(epoch):
     enc_.train()
     dec_.train()
     train_loss = 0
+    skipit=0
+    skiptotal=0
+    VAELoss=0
     for batch_idx, (data, label) in enumerate(train_loader):
+        go_skip=False
         data = Variable(data)
         if args.cuda:
             data = data.cuda()
@@ -165,17 +169,33 @@ def train(epoch):
         optimizer_dec.zero_grad()
         z, mu, logvar = enc_(data)
         recon_batch = dec_(z)
-        loss = loss_function(recon_batch, data, mu, logvar)
-        loss += 0.1 * punisher(z, label)
+        VLoss = loss_function(recon_batch, data, mu, logvar)
+        loss = VLoss + 0.1 * punisher(z, label)
         loss.backward()
-        train_loss += loss.data[0]
-        optimizer_enc.step()
-        optimizer_dec.step()
+
+        for i, ass in enumerate(enc_.parameters()):
+            if ass.grad is None:
+                continue
+            elif np.isnan(((ass.grad).data).numpy()).any():
+                go_skip=True
+
+        if (not go_skip):
+            train_loss += loss.data[0]
+            VAELoss += VLoss.data[0]
+            optimizer_enc.step()
+            optimizer_dec.step()
+        else:
+            optimizer_enc.zero_grad()
+            optimizer_dec.zero_grad()
+            skipit+=1
+            skiptotal+=1
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
-                       100. * batch_idx / len(train_loader),
-                       loss.data[0] / len(data)))
+                100. * batch_idx / len(train_loader),
+                loss.data[0] / len(data)))
+            print 'Skip number : '+str(skipit)
+            skipit=0
 
     print '====> Epoch: ' + str(epoch) + ' Average loss: ' + str(
         train_loss / len(train_loader.dataset))
@@ -224,7 +244,7 @@ def plot(filename):
         if args.cuda:
             data = data.cuda()
         data = Variable(data, volatile=True)
-        mu = enc_(data)
+        zzzz,mu,logvar = enc_(data)
         mu_disk = proj(mu)
         for j, z in enumerate(mu_disk):
             if label[j] == 0:

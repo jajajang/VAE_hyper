@@ -23,13 +23,14 @@ parser.add_argument('--epochs', type=int, default=10, metavar='N',
                     help='number of epochs to train (default: 10)')
 parser.add_argument('--no-cuda', action='store_true', default=False,
                     help='enables CUDA training')
-parser.add_argument('--seed', type=int, default=1, metavar='S',
+parser.add_argument('--seed', type=int, default=3, metavar='S',
                     help='random seed (default: 1)')
 parser.add_argument('--log-interval', type=int, default=10, metavar='N',
                     help='how many batches to wait before logging training status')
 args = parser.parse_args()
 
 args.cuda = (not args.no_cuda) and torch.cuda.is_available()
+
 
 
 torch.manual_seed(args.seed)
@@ -71,13 +72,6 @@ enc_ = encoder()
 if args.cuda:
     enc_.cuda()
 
-def new_addition(u,v):
-    uu = u.norm(dim=1) ** 2
-    vv = v.norm(dim=1) ** 2
-    uv = torch.diag(torch.mm(u,v.t()),0)
-    uppp= (torch.mm(torch.diag(1+2*uv+vv),u)+torch.mm(torch.diag(1-uu),v))
-    downy=(1+2*uv+torch.mul(uu,vv))
-    return torch.inverse(torch.diag(downy)).mm(uppp)
 
 def loss_function(recon_x, x, mu, logvar):
     BCE = F.binary_cross_entropy(recon_x, x.view(-1, 784))
@@ -98,12 +92,15 @@ def proj(params):
 	    paramsy[i]=params[i]/(params[i].norm()).clamp(min=1-EPS)*(1-EPS)
     return paramsy
 '''
+
+
 def proj(params):
     paramsy=params.clone()
-    t_val=(params.norm(p=2, dim=1)**2+1).sqrt()
+    t_val = (params.norm(p=2, dim=1)**2+1).sqrt()
     for i in range(args.batch_size):
-        paramsy[i]=params[i]/(1+t_val[i])
+        paramsy[i] = params[i]/(1+t_val[i])
     return paramsy
+
 
 def arcosh(x):
     return torch.log(x + torch.sqrt(x ** 2 - 1))
@@ -125,26 +122,35 @@ def distance(u, v):
     return arcosh(gamma)
 """
 
+
 def distance(u,v):
-    uu = u.norm() ** 2
-    vv = v.norm() ** 2
+    uu = torch.dot(u, u)
+    vv = torch.dot(v, v)
     u0 = (uu+1)
     v0 = (vv+1)
     d = arcosh(u0.sqrt()*v0.sqrt()-torch.dot(u,v))
     return d
 
-def toobig(u):
-    uu = u.norm()**2
-    return torch.exp(uu.clamp(min=1)-1)-1
 
-optimizer_enc = optim.ASGD(enc_.parameters(), lr=1e-3)
+optimizer_enc = optim.Adam(enc_.parameters(), lr=1e-3)
+
+
+mew=0
+labby=0
+grady=0
+
 
 
 def train(epoch):
+    global mew
+    global labby
+    global grady
     enc_.train()
     train_loss = 0
     prev_data=0
+    skipit=0
     for batch_idx, (data, label) in enumerate(train_loader):
+        go_skip=False
         data = Variable(data)
         if args.cuda:
             data = data.cuda()
@@ -157,23 +163,30 @@ def train(epoch):
                 continue
             elif np.isnan(((ass.grad).data).numpy()).any():
                 print mu
-                print label
-                print loss
-                print ass.grad.data
-                sys.exit()
-        train_loss += loss.data[0]
-        optimizer_enc.step()
-        prev_label=label
+                mew=mu
+                labby=label
+                go_skip=True
+
+        if (not go_skip):
+            train_loss += loss.data[0]
+            optimizer_enc.step()
+        else:
+            optimizer_enc.zero_grad()
+            skipit+=1
+        grady=ass.grad.data
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader),
                 loss.data[0] / len(data)))
+            print 'Skip number : '+str(skipit)
+            skipit=0
 
     print '====> Epoch: '+ str(epoch)+' Average loss: '+ str(
 	  train_loss / len(train_loader.dataset))
     print('====> Epoch: {} Average loss: {:.4f}'.format(
           epoch, train_loss / len(train_loader.dataset)))
+
 
 
 def punisher(z, label):
