@@ -8,7 +8,7 @@ from torchvision import datasets, transforms
 from torchvision.utils import save_image
 import matplotlib
 
-matplotlib.use('Agg')
+matplotlib.use('pdf')
 import matplotlib.pyplot as plt
 import numpy as np
 import os
@@ -184,7 +184,7 @@ def train(epoch):
         for i, ass in enumerate(enc_.parameters()):
             if ass.grad is None:
                 continue
-            elif np.isnan(((ass.grad).data).numpy()).any():
+            elif np.isnan(((ass.grad).data.cpu()).numpy()).any():
                 go_skip=True
 
         if (not go_skip):
