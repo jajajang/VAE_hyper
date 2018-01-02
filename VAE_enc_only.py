@@ -211,7 +211,7 @@ def test(epoch):
             data = data.cuda()
         data = Variable(data, volatile=True)
         mu= enc_(data)
-        test_loss += 0.1*punisher(mu,label).data[0]
+        test_loss += punisher(mu,label).data[0]
         if i == 0:
           n = min(data.size(0), 8)
     test_loss /= len(test_loader.dataset)
@@ -236,36 +236,46 @@ def plot(filename):
         if args.cuda:
             data = data.cuda()
         data = Variable(data, volatile=True)
-        mu = enc_(data)
-        mu_disk=proj(mu)
+        mu= enc_(data)
+        mu_disk = proj(mu)
+        z0=0
+        z1=0
+        z2=0
+        z3=0
+        z4=0
+        z5=0
+        z6=0
+        z7=0
+        z8=0
+        z9=0
         for j, z in enumerate(mu_disk):
-    	    if label[j]==0:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C0')
-    	    elif label[j]==1:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C1')
-    	    elif label[j]==2:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C2')
-    	    elif label[j]==3:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C3')
-    	    elif label[j]==4:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C4')
-    	    elif label[j]==5:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C5')
-    	    elif label[j]==6:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C6')
-    	    elif label[j]==7:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C7')
-    	    elif label[j]==8:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C8')
-    	    elif label[j]==9:
-        	    	ax.plot(z.data[0],z.data[1], 'o', color='C9')
-
-    plt.savefig(filename)
+            if label[j] == 0:
+                z0, = ax.plot(z.data[0], z.data[1], 'o', color='C0', label='0')
+            elif label[j] == 1:
+                z1, = ax.plot(z.data[0], z.data[1], 'o', color='C1', label='1')
+            elif label[j] == 2:
+                z2, = ax.plot(z.data[0], z.data[1], 'o', color='C2', label='2')
+            elif label[j] == 3:
+                z3, =ax.plot(z.data[0], z.data[1], 'o', color='C3', label='3')
+            elif label[j] == 4:
+                z4, =ax.plot(z.data[0], z.data[1], 'o', color='C4', label='4')
+            elif label[j] == 5:
+                z5, =ax.plot(z.data[0], z.data[1], 'o', color='C5', label='5')
+            elif label[j] == 6:
+                z6, = ax.plot(z.data[0], z.data[1], 'o', color='C6', label='6')
+            elif label[j] == 7:
+                z7, = ax.plot(z.data[0], z.data[1], 'o', color='C7', label='7')
+            elif label[j] == 8:
+                z8, = ax.plot(z.data[0], z.data[1], 'o', color='C8', label='8')
+            elif label[j] == 9:
+                z9, = ax.plot(z.data[0], z.data[1], 'o', color='C9', label='9')
+    plt.legend([z0,z1,z2,z3,z4,z5,z6,z7,z8,z9], ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
+    plt.savefig(filename, format='pdf')
 
 
 for epoch in range(1, args.epochs + 1):
     train(epoch)
     test(epoch)
-    plot('Latent_0.1_mu_only_'+str(epoch)+'epoch.png')
+    plot('Latent_0.1_mummy_'+str(epoch)+'epoch.png')
 
 
