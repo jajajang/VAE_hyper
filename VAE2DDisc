@@ -201,7 +201,7 @@ def test(epoch):
         data = Variable(data, volatile=True)
         z, mu, logvar = enc_(data)
         recon_batch = dec_(z)
-        new_label=model(recon_batch).data.cpu()
+        new_label=model(recon_batch.view(args.batch_size, 1, 28, 28)).data.cpu().numpy()
         for i in range(args.batch_size):
             total+=1
             if label[i]==new_label[i]:
