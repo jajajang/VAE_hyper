@@ -112,8 +112,8 @@ class Net(nn.Module):
 model = Net()
 if args.cuda:
     model.cuda()
-model.load_state_dict('Discriminator.pt')
 
+model.load_state_dict(torch.load('Discriminator.pt'))
 enc_ = encoder()
 dec_ = decoder()
 
