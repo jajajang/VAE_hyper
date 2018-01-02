@@ -13,7 +13,7 @@ dir_path=os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 
 parser = argparse.ArgumentParser(description='VAE MNIST Example')
-parser.add_argument('--batch-size', type=int, default=16, metavar='N',
+parser.add_argument('--batch-size', type=int, default=128, metavar='N',
                     help='input batch size for training (default: 128)')
 parser.add_argument('--epochs', type=int, default=10, metavar='N',
                     help='number of epochs to train (default: 10)')
@@ -203,7 +203,6 @@ def test(epoch):
         z, mu, logvar = enc_(data)
         recon_batch = dec_(z)
         new_label=model(recon_batch.view(list(recon_batch.size())[0], 1, 28, 28)).data.cpu().numpy()
-        print new_label
         for i in range(args.batch_size):
             total+=1
             if label[i]==np.argmax(new_label[i]):
