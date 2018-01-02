@@ -204,7 +204,7 @@ def test(epoch):
         new_label=model(recon_batch.view(args.batch_size, 1, 28, 28)).data.cpu().numpy()
         for i in range(args.batch_size):
             total+=1
-            if label[i]==new_label[i]:
+            if label[i]==new_label[i].index(max(values)):
                 correct+=1
     print '<-------------TEST LOSS------------->'
     print correct/total
