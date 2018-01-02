@@ -209,7 +209,7 @@ def test(epoch):
             if label[i]==np.argmax(new_label[i]):
                 correct+=1
     print '<-------------TEST LOSS------------->'
-    print correct/total
+    print correct*(1.0)/total
 
 
 for epoch in range(1, args.epochs + 1):
