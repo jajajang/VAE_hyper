@@ -6,9 +6,14 @@ from torch.autograd import Variable
 from torch.nn import functional as F
 from torchvision import datasets, transforms
 from torchvision.utils import save_image
+import matplotlib
+
+matplotlib.use('pdf')
+import matplotlib.pyplot as plt
+import numpy as np
 import os
 
-dir_path=os.path.dirname(os.path.realpath(__file__))
+dir_path = os.path.dirname(os.path.realpath(__file__))
 os.chdir(dir_path)
 
 parser = argparse.ArgumentParser(description='VAE MNIST Example')
@@ -26,11 +31,10 @@ args = parser.parse_args()
 
 args.cuda = (not args.no_cuda) and torch.cuda.is_available()
 
-
 torch.manual_seed(args.seed)
 if args.cuda:
     torch.cuda.manual_seed(args.seed)
-
+EPS = 1e-5
 
 kwargs = {'num_workers': 1, 'pin_memory': True} if args.cuda else {}
 train_loader = torch.utils.data.DataLoader(
@@ -47,10 +51,8 @@ class encoder(nn.Module):
         super(encoder, self).__init__()
 
         self.fc1 = nn.Linear(784, 400)
-        self.fc21 = nn.Linear(400, 20)
-        self.fc22 = nn.Linear(400, 20)
-        self.fc3 = nn.Linear(20, 400)
-        self.fc4 = nn.Linear(400, 784)
+        self.fc21 = nn.Linear(400, 10)
+        self.fc22 = nn.Linear(400, 10)
 
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
@@ -68,17 +70,17 @@ class encoder(nn.Module):
         mu, logvar = self.encode(x.view(-1, 784))
         return self.reparameterize(mu, logvar)
 
+
 class decoder(nn.Module):
-	
     def __init__(self):
         super(decoder, self).__init__()
 
-        self.fc3 = nn.Linear(20, 400)
+        self.fc3 = nn.Linear(10, 400)
         self.fc4 = nn.Linear(400, 784)
 
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
-        
+
     def decode(self, z):
         h3 = self.relu(self.fc3(z))
         return self.sigmoid(self.fc4(h3))
@@ -108,11 +110,13 @@ def loss_function(recon_x, x, mu, logvar):
 
     return BCE + KLD
 
+
 def proj(params):
-    norm = params.norm(p=2, dim=1).unsqueeze(1)
-    norm[norm < 1] = 1 + EPS
-    params = params.div(norm) - EPS
-    return params
+    paramsy = params.clone()
+    t_val = (params.norm(p=2, dim=1) ** 2 + 1).sqrt()
+    for i in range(args.batch_size):
+        paramsy[i] = params[i] / (1 + t_val[i])
+    return paramsy
 
 
 def arcosh(x):
@@ -120,76 +124,112 @@ def arcosh(x):
 
 
 def distance(u, v):
-    uu = u.norm(dim=1) ** 2
-    vv = v.norm(dim=1) ** 2
-    uv = u.mm(v.t())
-    alpha = 1 - uu
-    alpha = alpha.clamp(min=EPS)
-    beta = 1 - vv
-    beta = beta.clamp(min=EPS)
+    uu = u.norm() ** 2
+    vv = v.norm() ** 2
+    u0 = (uu + 1)
+    v0 = (vv + 1)
+    d = arcosh(u0.sqrt() * v0.sqrt() - torch.dot(u, v))
+    return d.clamp(min=EPS)
 
-    gamma = 1 + 2 * (uu - 2 * uv + vv) / (alpha * beta)
-    gamma = gamma.clamp(min=1 + EPS)
 
-    return arcosh(gamma)
+
+def punisher(z, label):
+    same_family = 0
+    diff_family = 0
+    for i, latent_1 in enumerate(z):
+        for j, latent_2 in enumerate(z):
+            if i >= j:
+                continue
+            elif label[i] == label[j]:
+                same_family += torch.exp(-distance(latent_1, latent_2))
+            else:
+                diff_family += torch.exp(-distance(latent_1, latent_2))
+
+    return -torch.log(same_family) + torch.log(diff_family)
+
 
 optimizer_enc = optim.Adam(enc_.parameters(), lr=1e-3)
 optimizer_dec = optim.Adam(dec_.parameters(), lr=1e-3)
 
 
-def train(epoch):
+def train(epoch, beta):
     enc_.train()
     dec_.train()
     train_loss = 0
-    for batch_idx, (data, _) in enumerate(train_loader):
+    logvar_sum = 0
+    skipit = 0
+    for batch_idx, (data, label) in enumerate(train_loader):
+        go_skip=False
         data = Variable(data)
         if args.cuda:
             data = data.cuda()
         optimizer_enc.zero_grad()
         optimizer_dec.zero_grad()
         z, mu, logvar = enc_(data)
-	recon_batch= dec_(z)
-        loss = loss_function(recon_batch, data, mu, logvar)
+        recon_batch = dec_(z)
+        loss = loss_function(recon_batch, data, mu, logvar)+beta * punisher(z, label)
         loss.backward()
-        train_loss += loss.data[0]
-        optimizer_enc.step()
-        optimizer_dec.step()
+
+        for i, ass in enumerate(enc_.parameters()):
+            if ass.grad is None:
+                continue
+            elif np.isnan(((ass.grad).data.cpu()).numpy()).any():
+                go_skip=True
+
+        if (not go_skip):
+            train_loss += loss.data[0]
+            logvar_sum += logvar.data[0]
+            optimizer_enc.step()
+            optimizer_dec.step()
+        else:
+            optimizer_enc.zero_grad()
+            optimizer_dec.zero_grad()
+            skipit+=1
         if batch_idx % args.log_interval == 0:
             print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader),
                 loss.data[0] / len(data)))
+            print 'Skip number : '+str(skipit)
+            skipit=0
 
+    print '====> Epoch: ' + str(epoch) + ' Average loss: ' + str(
+        train_loss / len(train_loader.dataset))
+    print '====> Epoch: ' + str(epoch) + ' Average logvar: ' + str(
+        logvar_sum / len(train_loader.dataset))
     print('====> Epoch: {} Average loss: {:.4f}'.format(
-          epoch, train_loss / len(train_loader.dataset)))
+        epoch, train_loss / len(train_loader.dataset)))
 
 
-def test(epoch):
+def test(epoch, beta):
     enc_.eval()
     dec_.eval()
     test_loss = 0
-    for i, (data, _) in enumerate(test_loader):
+    for i, (data, label) in enumerate(test_loader):
         if args.cuda:
             data = data.cuda()
         data = Variable(data, volatile=True)
-        z, mu, logvar= enc_(data)
-	recon_batch=dec_(z)        
-	test_loss += loss_function(recon_batch, data, mu, logvar).data[0]
+        z, mu, logvar = enc_(data)
+        recon_batch = dec_(z)
+        test_loss += loss_function(recon_batch, data, mu, logvar).data[0]
+        test_loss += beta * punisher(z, label).data[0]
         if i == 0:
-          n = min(data.size(0), 8)
-          comparison = torch.cat([data[:n],
-                                  recon_batch.view(args.batch_size, 1, 28, 28)[:n]])
-          save_image(comparison.data.cpu(),
-                     'results/reconstruction_' + str(epoch) + '.png', nrow=n)
+            n = min(data.size(0), 8)
+            comparison = torch.cat([data[:n],
+                                    recon_batch.view(args.batch_size, 1, 28, 28)[:n]])
+            save_image(comparison.data.cpu(),
+                       'results_beta/reconstruction_d10'+'_epoch' + str(epoch) + '_beta'+str(beta)+'.pdf', nrow=n)
 
     test_loss /= len(test_loader.dataset)
-    print('====> Test set loss: {:.4f}'.format(test_loss))
 
-for epoch in range(1, args.epochs + 1):
-    train(epoch)
-    test(epoch)
+    print '<-------------TEST LOSS------------->'
+    print test_loss
 
 
-torch.save(enc_.state_dict(),'enc_training.pt')
-torch.save(dec_.state_dict(),'enc_training.pt')
+beta = 0.01
 
+for i in range(1, 5):
+    for epoch in range(1, args.epochs + 1):
+        train(epoch, beta)
+        test(epoch, beta)
+    beta = beta*10

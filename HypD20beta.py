@@ -173,7 +173,7 @@ def train(epoch, beta):
         for i, ass in enumerate(enc_.parameters()):
             if ass.grad is None:
                 continue
-            elif np.isnan(((ass.grad).data).numpy()).any():
+            elif np.isnan(((ass.grad).data.cpu()).numpy()).any():
                 go_skip=True
 
         if (not go_skip):
@@ -212,7 +212,7 @@ def test(epoch, beta):
         z, mu, logvar = enc_(data)
         recon_batch = dec_(z)
         test_loss += loss_function(recon_batch, data, mu, logvar).data[0]
-        test_loss += 0.1 * punisher(z, label).data[0]
+        test_loss += beta * punisher(z, label).data[0]
         if i == 0:
             n = min(data.size(0), 8)
             comparison = torch.cat([data[:n],
